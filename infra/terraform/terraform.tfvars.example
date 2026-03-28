@@ -1,0 +1,9 @@
+project_name   = "narrowbeacon"
+cloud_target   = "both"
+aws_region     = "us-east-1"
+azure_location = "eastus"
+
+tags = {
+  environment = "dev"
+  owner       = "platform-team"
+}
