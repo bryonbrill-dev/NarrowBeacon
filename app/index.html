@@ -3,12 +3,529 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>NarrowBeacon</title>
+    <title>NarrowBeacon | Goals & Meeting Hub</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f3f6fb;
+        --card: #ffffff;
+        --ink: #17212f;
+        --muted: #5f6b7a;
+        --border: #d9e1ec;
+        --accent: #2c6bed;
+        --ok: #198754;
+        --warn: #d97706;
+        --danger: #c2410c;
+        --done: #3b82f6;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: Inter, Segoe UI, Roboto, Arial, sans-serif;
+        color: var(--ink);
+        background: var(--bg);
+      }
+
+      header {
+        background: linear-gradient(110deg, #14233d, #1f3f73);
+        color: #fff;
+        padding: 1rem 1.25rem;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+      }
+
+      .header-inner {
+        max-width: 1100px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: 1.2rem;
+      }
+
+      nav {
+        display: flex;
+        gap: 0.5rem;
+      }
+
+      .tab-btn {
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        background: transparent;
+        color: white;
+        border-radius: 999px;
+        padding: 0.45rem 0.9rem;
+        cursor: pointer;
+        font-weight: 600;
+      }
+
+      .tab-btn.active {
+        background: white;
+        color: #163365;
+      }
+
+      main {
+        max-width: 1100px;
+        margin: 1.25rem auto 2rem;
+        padding: 0 1rem;
+      }
+
+      .view {
+        display: none;
+      }
+
+      .view.active {
+        display: block;
+      }
+
+      .card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 1rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+      }
+
+      .grid {
+        display: grid;
+        gap: 1rem;
+      }
+
+      .kpi-grid {
+        grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+        margin-bottom: 1rem;
+      }
+
+      .kpi h2 {
+        font-size: 0.88rem;
+        color: var(--muted);
+        margin: 0 0 0.35rem;
+      }
+
+      .kpi p {
+        margin: 0;
+        font-size: 1.4rem;
+        font-weight: 700;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      th,
+      td {
+        text-align: left;
+        vertical-align: top;
+        padding: 0.7rem;
+        border-bottom: 1px solid var(--border);
+      }
+
+      th {
+        font-size: 0.82rem;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+        color: var(--muted);
+      }
+
+      .status-pill {
+        display: inline-block;
+        border-radius: 999px;
+        padding: 0.25rem 0.55rem;
+        font-size: 0.75rem;
+        font-weight: 700;
+      }
+
+      .not-started {
+        background: #e2e8f0;
+        color: #334155;
+      }
+
+      .completed {
+        background: #dbeafe;
+        color: #1d4ed8;
+      }
+
+      .on-track {
+        background: #dcfce7;
+        color: #166534;
+      }
+
+      .offtrack {
+        background: #ffedd5;
+        color: #9a3412;
+      }
+
+      .meeting-head {
+        display: grid;
+        gap: 1rem;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        margin-bottom: 1rem;
+      }
+
+      label {
+        display: block;
+        font-size: 0.82rem;
+        color: var(--muted);
+        margin-bottom: 0.35rem;
+      }
+
+      input,
+      textarea,
+      select {
+        width: 100%;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 0.6rem;
+        font: inherit;
+      }
+
+      textarea {
+        min-height: 90px;
+      }
+
+      .agenda-row {
+        display: grid;
+        gap: 0.8rem;
+        align-items: start;
+        grid-template-columns: 1fr minmax(150px, 190px);
+        padding: 0.85rem;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        margin-bottom: 0.8rem;
+        background: #fcfdff;
+      }
+
+      .agenda-row h3 {
+        margin: 0 0 0.25rem;
+        font-size: 1rem;
+      }
+
+      .agenda-row p {
+        margin: 0;
+        color: var(--muted);
+      }
+
+      .timer-box {
+        text-align: center;
+      }
+
+      .timer {
+        font-size: 1.7rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+      }
+
+      .controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.45rem;
+        justify-content: center;
+      }
+
+      .btn {
+        border: 1px solid #c5d2e4;
+        background: white;
+        border-radius: 8px;
+        padding: 0.4rem 0.55rem;
+        cursor: pointer;
+      }
+
+      .btn.primary {
+        background: var(--accent);
+        color: white;
+        border-color: var(--accent);
+      }
+
+      .note-panel {
+        margin-top: 1rem;
+      }
+
+      .hint {
+        font-size: 0.83rem;
+        color: var(--muted);
+      }
+
+      @media (max-width: 680px) {
+        .agenda-row {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
   </head>
   <body>
+    <header>
+      <div class="header-inner">
+        <h1>NarrowBeacon · Objectives Dashboard & Meeting Driver</h1>
+        <nav>
+          <button class="tab-btn active" data-tab="dashboard">Dashboard</button>
+          <button class="tab-btn" data-tab="meeting">Meeting Driver</button>
+        </nav>
+      </div>
+    </header>
+
     <main>
-      <h1>NarrowBeacon</h1>
-      <p>Initial multi-cloud deployment baseline is live.</p>
+      <section id="dashboard" class="view active" aria-label="Objectives dashboard">
+        <div class="grid kpi-grid">
+          <article class="card kpi">
+            <h2>Total Objectives</h2>
+            <p id="totalObjectives">0</p>
+          </article>
+          <article class="card kpi">
+            <h2>Completed</h2>
+            <p id="completedCount">0</p>
+          </article>
+          <article class="card kpi">
+            <h2>On Track</h2>
+            <p id="onTrackCount">0</p>
+          </article>
+          <article class="card kpi">
+            <h2>Offtrack</h2>
+            <p id="offTrackCount">0</p>
+          </article>
+        </div>
+
+        <article class="card">
+          <h2>Employee & Company Goals</h2>
+          <p class="hint">
+            Track objectives for employees and bigger company goals. Each entry includes a status and notes.
+          </p>
+          <table>
+            <thead>
+              <tr>
+                <th>Type</th>
+                <th>Owner</th>
+                <th>Goal</th>
+                <th>Status</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody id="objectiveRows"></tbody>
+          </table>
+        </article>
+      </section>
+
+      <section id="meeting" class="view" aria-label="Meeting timer and agenda">
+        <article class="card">
+          <h2>Team Meeting Agenda</h2>
+          <div class="meeting-head">
+            <div>
+              <label for="meetingDate">Date</label>
+              <input id="meetingDate" type="date" />
+            </div>
+            <div>
+              <label for="attendees">Attendees</label>
+              <input id="attendees" type="text" placeholder="Management, Team Leads, Engineering" />
+            </div>
+          </div>
+
+          <div id="agendaContainer"></div>
+
+          <div class="note-panel">
+            <label for="meetingNotes">Meeting Notes</label>
+            <textarea
+              id="meetingNotes"
+              placeholder="Capture decisions, actions, owners, due dates, and engagement highlights..."
+            ></textarea>
+          </div>
+        </article>
+      </section>
     </main>
+
+    <script>
+      const objectives = [
+        {
+          type: 'Employee',
+          owner: 'Alex Morgan',
+          goal: 'Launch customer onboarding v2 by Q2',
+          status: 'on track',
+          notes: 'MVP shipped; final analytics dashboard in progress.'
+        },
+        {
+          type: 'Employee',
+          owner: 'Sam Rivera',
+          goal: 'Reduce support SLA breaches below 2%',
+          status: 'offtrack',
+          notes: 'Need additional staffing for weekend coverage.'
+        },
+        {
+          type: 'Company',
+          owner: 'Leadership Team',
+          goal: 'Achieve 95% completion of strategic initiatives',
+          status: 'not-started',
+          notes: 'Program kickoff scheduled for next month.'
+        },
+        {
+          type: 'Company',
+          owner: 'Operations',
+          goal: 'Roll out quarterly planning framework',
+          status: 'completed',
+          notes: 'All departments trained and first cycle completed.'
+        }
+      ];
+
+      const agendaItems = [
+        {
+          title: 'Opening & Wins',
+          details: 'Quick check-in and positive updates from each person (one personal, one business).',
+          minutes: 5
+        },
+        {
+          title: 'Key Metrics & Business Updates',
+          details: 'Review KPI scorecard, financials, and urgent operational updates.',
+          minutes: 10
+        },
+        {
+          title: 'Priority Discussion & Issues',
+          details: 'Focus on key topics requiring leadership attention, decisions, and alignment.',
+          minutes: 30
+        },
+        {
+          title: 'Action Items & Accountability',
+          details: 'Review commitments and assign owners for new action items.',
+          minutes: 10
+        },
+        {
+          title: 'Wrap Up & Next Steps',
+          details: 'Clarify takeaways, confirm next topics, and gather meeting rating.',
+          minutes: 5
+        }
+      ];
+
+      const tabButtons = [...document.querySelectorAll('.tab-btn')];
+      const views = [...document.querySelectorAll('.view')];
+      const objectiveRows = document.getElementById('objectiveRows');
+
+      const statusClass = {
+        'not-started': 'not-started',
+        completed: 'completed',
+        'on track': 'on-track',
+        offtrack: 'offtrack'
+      };
+
+      function renderDashboard() {
+        objectiveRows.innerHTML = '';
+
+        objectives.forEach((item) => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${item.type}</td>
+            <td>${item.owner}</td>
+            <td>${item.goal}</td>
+            <td><span class="status-pill ${statusClass[item.status]}">${item.status}</span></td>
+            <td>${item.notes}</td>
+          `;
+          objectiveRows.appendChild(row);
+        });
+
+        document.getElementById('totalObjectives').textContent = objectives.length;
+        document.getElementById('completedCount').textContent = objectives.filter((x) => x.status === 'completed').length;
+        document.getElementById('onTrackCount').textContent = objectives.filter((x) => x.status === 'on track').length;
+        document.getElementById('offTrackCount').textContent = objectives.filter((x) => x.status === 'offtrack').length;
+      }
+
+      function formatTime(seconds) {
+        const mins = Math.floor(seconds / 60)
+          .toString()
+          .padStart(2, '0');
+        const secs = (seconds % 60).toString().padStart(2, '0');
+        return `${mins}:${secs}`;
+      }
+
+      function renderAgenda() {
+        const container = document.getElementById('agendaContainer');
+        agendaItems.forEach((item, index) => {
+          const totalSeconds = item.minutes * 60;
+          const row = document.createElement('section');
+          row.className = 'agenda-row';
+          row.innerHTML = `
+            <div>
+              <h3>${item.title}</h3>
+              <p>${item.details}</p>
+            </div>
+            <div class="timer-box">
+              <div class="hint">Allotted Time</div>
+              <div class="timer" id="timer-${index}">${formatTime(totalSeconds)}</div>
+              <div class="controls">
+                <button class="btn primary" data-action="start" data-index="${index}">Start</button>
+                <button class="btn" data-action="pause" data-index="${index}">Pause</button>
+                <button class="btn" data-action="reset" data-index="${index}">Reset</button>
+              </div>
+            </div>
+          `;
+          container.appendChild(row);
+        });
+      }
+
+      const timerState = {};
+
+      function handleTimerAction(button) {
+        const index = Number(button.dataset.index);
+        const item = agendaItems[index];
+        const key = `timer-${index}`;
+        const action = button.dataset.action;
+        const defaultSeconds = item.minutes * 60;
+
+        if (!timerState[key]) {
+          timerState[key] = { remaining: defaultSeconds, interval: null };
+        }
+
+        const timerDisplay = document.getElementById(key);
+        const state = timerState[key];
+
+        if (action === 'start') {
+          if (state.interval) return;
+          state.interval = setInterval(() => {
+            state.remaining -= 1;
+            timerDisplay.textContent = formatTime(Math.max(state.remaining, 0));
+            if (state.remaining <= 0) {
+              clearInterval(state.interval);
+              state.interval = null;
+            }
+          }, 1000);
+        }
+
+        if (action === 'pause') {
+          clearInterval(state.interval);
+          state.interval = null;
+        }
+
+        if (action === 'reset') {
+          clearInterval(state.interval);
+          state.interval = null;
+          state.remaining = defaultSeconds;
+          timerDisplay.textContent = formatTime(defaultSeconds);
+        }
+      }
+
+      document.addEventListener('click', (event) => {
+        const button = event.target.closest('button');
+        if (!button) return;
+
+        if (button.classList.contains('tab-btn')) {
+          const tab = button.dataset.tab;
+          tabButtons.forEach((b) => b.classList.toggle('active', b === button));
+          views.forEach((v) => v.classList.toggle('active', v.id === tab));
+        }
+
+        if (button.dataset.action) {
+          handleTimerAction(button);
+        }
+      });
+
+      renderDashboard();
+      renderAgenda();
+
+      document.getElementById('meetingDate').valueAsDate = new Date();
+    </script>
   </body>
 </html>
