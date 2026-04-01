@@ -34,6 +34,47 @@ By default, `cloud_target = "both"` and both providers are deployed. You can set
 - `cloud_target = "azure"`
 - `cloud_target = "both"`
 
+
+## Self-Hosted on Windows (No Terraform)
+
+If you want to run this project on your own Windows machine without Terraform, the simplest approach is to host the static files with IIS.
+
+### Option A: IIS Static Site (Recommended for Windows servers)
+
+1. **Enable IIS**
+   - Open **Turn Windows features on or off**
+   - Enable **Internet Information Services** (and **World Wide Web Services**)
+
+2. **Copy the app files**
+   - Create a folder such as `C:\\inetpub\\narrowbeacon`
+   - Copy `app/index.html` (and any other static assets) into that folder
+
+3. **Create an IIS website**
+   - Open **IIS Manager**
+   - Right-click **Sites** -> **Add Website...**
+   - Site name: `NarrowBeacon`
+   - Physical path: `C:\\inetpub\\narrowbeacon`
+   - Binding: choose port (for example `8080`)
+
+4. **Allow firewall access (if needed)**
+   - Open Windows Defender Firewall settings
+   - Add an inbound rule for your chosen port (for example TCP `8080`)
+
+5. **Browse to the site**
+   - Local machine: `http://localhost:8080`
+   - From another machine on your LAN: `http://<windows-host-ip>:8080`
+
+### Option B: Quick Local Test Without IIS
+
+If you only want a quick test server, from PowerShell:
+
+```powershell
+cd app
+python -m http.server 8080
+```
+
+Then open `http://localhost:8080`.
+
 ## Next Development Steps
 
 1. Replace `app/index.html` with your actual app build output.
